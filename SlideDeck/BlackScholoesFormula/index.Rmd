@@ -1,0 +1,141 @@
+---
+title       : Black-Scholes Formula 
+subtitle    : Easy Option Pricing App
+author      : Clay Burns 
+job         : Student 
+framework   : revealjs        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+
+
+## Overview
+
+
+The Black–Scholes or Black–Scholes–Merton model is a mathematical model of a financial market containing certain derivative investment instruments. From the model, one can deduce the Black–Scholes formula, which gives a theoretical estimate of the price of European-style options. The formula led to a boom in options trading and legitimised scientifically the activities of the Chicago Board Options Exchange and other options markets around the world.
+
+-First published by Fischer Black and Myron Scholes in their 1973 pape
+
+-Key idea behind the model is to hedge the option by buying and selling the underlying asset
+
+-Used for Delta Hedging 
+
+---
+
+## Explanations of Inputs 
+
+-Option Type - The two type of options call & put, respectively, guarantee the right to buy something at a future price, or the guarantee to sell it in the future at a certain price. 
+
+-Spot Price - This is the current price of the underlying asset. 
+
+-Time to Maturity - The length of time you would insure the underlying contract for. 
+
+-Strike Price - The price at which you would exercise the put or call option. 
+
+-Risk Free Rate - Typically the current interest rate, riskless investment return. 
+
+-Sigma - Volatility in the underlying asset.
+
+
+
+---
+
+## Explanations of Outputs 
+
+This app will provide you with the following outputs.
+
+-Price - the price of the option should be at fair market value. 
+
+-Delta - measures the sensitivity of an option's theoretical value to a change in the price of the underlying asset.
+
+-Gamma - measures the rate of change in the delta for each one-point increase in the underlying asset
+
+-Vega - measures the sensitivity of the price of an option to changes in volatility
+
+-Theta - a measure of the time decay of an option, the dollar amount that an option will lose each day due to the passage of time
+
+-Rho - rate at which the price of a derivative changes relative to a change in the risk-free rate of interest
+
+
+---
+
+## Example Calculations with Call Options
+```{r, echo=FALSE}
+BlackScholesFormula  <- function (spot,timetomat,strike,r, q=0, sigma, opttype=1, greektype=1)
+{ 
+        
+        d1<-(log(spot/strike)+ ((r-q)+0.5*sigma^2)*timetomat)/(sigma*sqrt(timetomat))
+        d2<-d1-sigma*sqrt(timetomat)
+        
+        if (opttype==1 && greektype==1) result<-spot*exp(-q*timetomat)*pnorm(d1)-strike*exp(-r*timetomat)*pnorm(d2)
+        if (opttype==2 && greektype==1) result<-spot*exp(-q*timetomat)*pnorm(d1)-strike*exp(-r*timetomat)*pnorm(d2)-spot*exp(-q*timetomat)+strike*exp(-r*timetomat)
+        
+        
+        if (opttype==4 && greektype==1) result<-(spot^2)*exp((r+sigma^2)*timetomat)
+        if (opttype==4 && greektype==2) result<-2*spot*exp((r+sigma^2)*timetomat)
+        
+        'Delta'
+        if (opttype==1 && greektype==2) result<-exp(-q*timetomat)*pnorm(d1)
+        if (opttype==2 && greektype==2) result<-exp(-q*timetomat)*(pnorm(d1)-1)
+        
+        'Gamma'
+        if (greektype==3) result<-exp(-q*timetomat)*dnorm(d1)/(spot*sigma*sqrt(timetomat))
+        
+        'Vega'
+        if (greektype==4) result<-exp(-q*timetomat)*spot*dnorm(d1)*sqrt(timetomat)
+        
+        'Theta'
+        if (opttype==1 && greektype==5) result<- q*spot*exp(-q*timetomat)*pnorm(d1)-spot*exp(-q*timetomat)*sigma/(2*sqrt(timetomat))*dnorm(d1)-r*strike*exp(-r*timetomat)*(1-pnorm(d2))
+        if (opttype==2 && greektype==5) result<- r*strike*exp(-r*timetomat)*(1-pnorm(d2))-q*spot*exp(-q*timetomat)*(1-pnorm(d1))-spot*exp(-q*timetomat)*sigma/(2*sqrt(timetomat))*dnorm(d1)
+        
+        'Rho'
+        if (opttype==1 && greektype==6) result<-strike*timetomat*exp(-r*timetomat)*pnorm(d2)
+        if (opttype==2 && greektype==6) result<--strike*timetomat*exp(-r*timetomat)*(1-pnorm(d2))
+        
+        BlackScholesFormula<-result
+        
+}
+
+BlackScholesImpVol  <- function (obsprice,spot,timetomat,strike,r, q=0, opttype=1)
+        
+{ difference<- function(sigBS, obsprice,spot,timetomat,strike,r,q,opttype)
+{BlackScholesFormula (spot,timetomat,strike,r,q,sigBS, opttype,1)-obsprice
+}
+
+uniroot(difference, c(10^-6,10),obsprice=obsprice,spot=spot,timetomat=timetomat,strike=strike,r=r,q=q,opttype=opttype)$root
+
+}
+
+```
+
+```{r}
+spot<-100
+timetomat<-1 
+strike<-90
+r_f <-5
+sigma <-20
+optionType <- 1
+
+
+BSF <-BlackScholesFormula(spot,timetomat,strike,r_f/100, ,sigma/100, optionType, )
+BSF
+```
+
+---
+
+## Implementation
+
+By using this application in the office we can automate calculations, increase efficiency and reduce possible errors. Tired of long form calculations via excel or TI calculator? This app will let you focus on your actual job. Further, this model will provide six calculations that would otherwise have had to be done independently. For these reasons, I urge the administration to implement this Shiny app. 
+
+
+---
+
+## Thank you and Happy Trading 
+
+---
+
+
