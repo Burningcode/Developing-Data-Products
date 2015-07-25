@@ -10,7 +10,21 @@ shinyUI(navbarPage("J.H.U. Project",
                            It will then provide Delta, Gamma, Vega, Theta, & Rho.
                            If you enter in the variable data for the opition you our considering 
                            it will then provide you with the theoritecal price that should be
-                           paid at market equilbrium."
+                           paid at market equilbrium.
+                           
+                           This app will provide you with the following outputs.
+                        Price, the price of the option should be at fair market value. 
+                                
+                        Delta, measures the sensitivity of an option's theoretical value to a change in the price of the underlying asset.
+                                
+                        Gamma, measures the rate of change in the delta for each one-point increase in the underlying asset
+                                
+                        Vega, measures the sensitivity of the price of an option to changes in volatility
+                                
+                        Theta, a measure of the time decay of an option, the dollar amount that an option will lose each day due to the passage of time
+                                
+                        Rho, rate at which the price of a derivative changes relative to a change in the risk-free rate of interest"
+                                
                            
                          )
                  ),
